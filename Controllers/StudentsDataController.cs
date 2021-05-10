@@ -103,7 +103,8 @@ namespace StudentsDataApi.Controllers
                     return BadRequest("Nieprawidłowe dane");
                 }
 
-                var studentDb = _context.Students.Where(s => s.Id == id).FirstOrDefault<StudentData>();
+                var studentDb = _context.Students
+                    .Where(s => s.Id == id).FirstOrDefault<StudentData>();
 
                 if (studentDb != null)
                 {
