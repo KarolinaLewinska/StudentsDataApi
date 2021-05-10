@@ -19,7 +19,7 @@ namespace StudentsDataApi.Controllers
         }
 
         [HttpGet, Route("wszyscy")]
-        public IEnumerable<StudentData> GetStudents()
+        public IEnumerable<StudentData> GetAllStudentsData()
         {
             try
             {
@@ -39,7 +39,7 @@ namespace StudentsDataApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(StudentData))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<StudentData> GetStudentsData(int id)
+        public ActionResult<StudentData> GetStudentData(int id)
         {
             try
             {
@@ -77,7 +77,7 @@ namespace StudentsDataApi.Controllers
                 _context.Students.Add(student);
                 _context.SaveChanges();
 
-                return CreatedAtAction(nameof(GetStudentsData), new { id = student.Id }, student);
+                return CreatedAtAction(nameof(GetStudentData), new { id = student.Id }, student);
             }
             catch (Exception exc)
             {
@@ -85,11 +85,11 @@ namespace StudentsDataApi.Controllers
             } 
         }
 
-        [HttpPatch("{id}"), Route("zaktualizuj-dane/{id}")]
+        [HttpPut("{id}"), Route("zaktualizuj-dane/{id}")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(StudentData))]
-        public ActionResult<StudentData> PatchStudentData(int id, StudentData student)
+        public ActionResult<StudentData> UpdateStudentData(int id, StudentData student)
         {
             try
             {
@@ -103,9 +103,23 @@ namespace StudentsDataApi.Controllers
                     return BadRequest("Nieprawidłowe dane");
                 }
 
-                _context.Students.Update(student);
-                _context.SaveChanges();
+                var studentDb = _context.Students.Where(s => s.Id == id).FirstOrDefault<StudentData>();
 
+                if (studentDb != null)
+                {
+                    studentDb.name = student.name;
+                    studentDb.surname = student.surname;
+                    studentDb.indexNumber = student.indexNumber;
+                    studentDb.pesel = student.pesel;
+                    studentDb.email = student.email;
+                    studentDb.studiesType = student.studiesType;
+                    studentDb.degree = student.degree;
+                    studentDb.fieldOfStudy = student.fieldOfStudy;
+                    studentDb.specialization = student.specialization;
+                    
+                    _context.SaveChanges();
+                }
+                   
                 return Ok("Zaktualizowano dane studenta o id: " + id);
             }
             catch (Exception exc)
