@@ -32,7 +32,7 @@ namespace StudentsDataApi.Controllers
                 }
                 return Ok(_context.Students);
             }
-            catch (Exception exc)
+            catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
                    "Error retrieving data from the database"); 
@@ -60,7 +60,7 @@ namespace StudentsDataApi.Controllers
                 }
                 return Ok(Student);
             }
-            catch (Exception exc)
+            catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
                    "Error retrieving data from the database");
@@ -85,7 +85,7 @@ namespace StudentsDataApi.Controllers
 
                 return CreatedAtAction(nameof(GetStudentData), new { id = student.Id }, student);
             }
-            catch (Exception exc)
+            catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
                    "Error retrieving data from the database");
@@ -131,7 +131,7 @@ namespace StudentsDataApi.Controllers
                    
                 return Ok("Successfully updated student's data with ID: " + id);
             }
-            catch (Exception exc)
+            catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
                    "Error retrieving data from the database");
@@ -163,7 +163,7 @@ namespace StudentsDataApi.Controllers
 
                 return Ok("Successfully deleted student's data");
             }
-            catch (Exception exc)
+            catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
                    "Error retrieving data from the database");
