@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace StudentsDataApi.Controllers
 {
-    [Route("api/dane-studentow")]
+    [Route("api/students-data")]
     [ApiController]
     public class StudentsDataController : ControllerBase
     {
@@ -18,20 +18,24 @@ namespace StudentsDataApi.Controllers
             _context = context;
         }
 
-        [HttpGet, Route("wszyscy")]
-        public IEnumerable<StudentData> GetAllStudentsData()
+        [HttpGet, Route("all-data")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(StudentData))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<StudentData> GetAllStudentsData()
         {
             try
             {
                 if (_context.Students == null)
                 {
-                  throw new Exception("Nie znaleziono danych w bazie");
+                    return NotFound("Data not found");
                 }
-                return _context.Students.ToList();
+                return Ok(_context.Students);
             }
             catch (Exception exc)
             {
-                throw exc;
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                   "Error retrieving data from the database"); 
             }
         }
 
@@ -39,6 +43,7 @@ namespace StudentsDataApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(StudentData))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ActionResult<StudentData> GetStudentData(int id)
         {
             try
@@ -47,31 +52,32 @@ namespace StudentsDataApi.Controllers
 
                 if (Student == null)
                 {
-                    return NotFound("Nie znaleziono danych studenta o id: " + id);
+                    return NotFound("Not found any student with ID: " + id);
                 }
                 if (!ModelState.IsValid)
                 {
-                    return BadRequest("Nieprawidłowe dane");
+                    return BadRequest(ModelState);
                 }
-
                 return Ok(Student);
             }
             catch (Exception exc)
             {
-                throw exc;
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                   "Error retrieving data from the database");
             }
         }
 
-        [HttpPost, Route("dodaj-dane")]
+        [HttpPost, Route("add-data")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ActionResult<StudentData> AddStudentData(StudentData student)
         {
             try
             {
                 if (!ModelState.IsValid)
                 {
-                    return BadRequest("Nieprawidłowe dane");
+                    return BadRequest(ModelState);
                 }
 
                 _context.Students.Add(student);
@@ -81,26 +87,28 @@ namespace StudentsDataApi.Controllers
             }
             catch (Exception exc)
             {
-                throw exc;
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                   "Error retrieving data from the database");
             } 
         }
 
-        [HttpPut("{id}"), Route("zaktualizuj-dane/{id}")]
+        [HttpPut("{id}"), Route("update-data/{id}")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(StudentData))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ActionResult<StudentData> UpdateStudentData(int id, StudentData student)
         {
             try
             {
                 if (id != student.Id)
                 {
-                    return NotFound("Nie znaleziono danych studenta o id: " + id);
+                    return NotFound("Not found any student with ID: " + id);
                 }
 
                 if (!ModelState.IsValid)
                 {
-                    return BadRequest("Nieprawidłowe dane");
+                    return BadRequest(ModelState);
                 }
 
                 var studentDb = _context.Students
@@ -121,18 +129,20 @@ namespace StudentsDataApi.Controllers
                     _context.SaveChanges();
                 }
                    
-                return Ok("Zaktualizowano dane studenta o id: " + id);
+                return Ok("Successfully updated student's data with ID: " + id);
             }
             catch (Exception exc)
             {
-                throw exc;
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                   "Error retrieving data from the database");
             }
         }
 
-        [HttpDelete("{id}"), Route("usun-dane/{id}")]
+        [HttpDelete("{id}"), Route("delete-data/{id}")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(StudentData))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ActionResult<StudentData> DeleteStudentData(int id)
         {
             try
@@ -141,21 +151,22 @@ namespace StudentsDataApi.Controllers
 
                 if (Student == null)
                 {
-                    return NotFound("Nie znaleziono danych studenta o id: " + id) ;
+                    return NotFound("Not found any student with ID: " + id) ;
                 }
                 if (!ModelState.IsValid)
                 {
-                    return BadRequest("Nieprawidłowe dane");
+                    return BadRequest(ModelState);
                 }
 
                 _context.Students.Remove(Student);
                 _context.SaveChanges();
 
-                return Ok("Usunięto dane studenta");
+                return Ok("Successfully deleted student's data");
             }
             catch (Exception exc)
             {
-                throw exc;
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                   "Error retrieving data from the database");
             }
         }
     }
