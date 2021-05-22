@@ -77,6 +77,13 @@ namespace StudentsDataApi.Controllers
 
             try
             {
+                var existingPesel = _context.Students.SingleOrDefault(x => x.pesel == student.pesel);
+                var existingIndexNumber = _context.Students.SingleOrDefault(x => x.indexNumber == student.indexNumber);
+                var existingEmail = _context.Students.SingleOrDefault(x => x.email == student.email);
+                
+                if (existingPesel != null || existingIndexNumber != null || existingEmail != null)
+                    return StatusCode(StatusCodes.Status409Conflict, "Student's data with the same pesel / index number or email already exists.");
+                
                 _context.Students.Add(student);
                 _context.SaveChanges();
 
