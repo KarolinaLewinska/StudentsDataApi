@@ -21,21 +21,23 @@ namespace StudentsDataApi.Controllers
         [HttpGet, Route("all-data")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(StudentData))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ActionResult<StudentData> GetAllStudentsData()
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             try
             {
                 if (_context.Students == null)
-                {
                     return NotFound("Data not found");
-                }
+                
                 return Ok(_context.Students);
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                   "Error retrieving data from the database"); 
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.Message); 
             }
         }
 
@@ -46,24 +48,21 @@ namespace StudentsDataApi.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ActionResult<StudentData> GetStudentData(int id)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            
             try
             {
                 var Student = _context.Students.Find(id);
 
                 if (Student == null)
-                {
                     return NotFound("Not found any student with ID: " + id);
-                }
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
+                
                 return Ok(Student);
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                   "Error retrieving data from the database");
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.Message);
             }
         }
 
@@ -73,22 +72,19 @@ namespace StudentsDataApi.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ActionResult<StudentData> AddStudentData(StudentData student)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-
                 _context.Students.Add(student);
                 _context.SaveChanges();
 
                 return CreatedAtAction(nameof(GetStudentData), new { id = student.Id }, student);
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                   "Error retrieving data from the database");
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.Message);
             } 
         }
 
@@ -99,18 +95,14 @@ namespace StudentsDataApi.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ActionResult<StudentData> UpdateStudentData(int id, StudentData student)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             try
             {
                 if (id != student.Id)
-                {
                     return NotFound("Not found any student with ID: " + id);
-                }
-
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-
+                
                 var studentDb = _context.Students
                     .Where(s => s.Id == id).FirstOrDefault<StudentData>();
 
@@ -131,10 +123,9 @@ namespace StudentsDataApi.Controllers
                    
                 return Ok("Successfully updated student's data with ID: " + id);
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                   "Error retrieving data from the database");
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.Message);
             }
         }
 
@@ -145,28 +136,24 @@ namespace StudentsDataApi.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ActionResult<StudentData> DeleteStudentData(int id)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             try
             {
                 var Student = _context.Students.Find(id);
 
                 if (Student == null)
-                {
                     return NotFound("Not found any student with ID: " + id) ;
-                }
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-
+                
                 _context.Students.Remove(Student);
                 _context.SaveChanges();
 
                 return Ok("Successfully deleted student's data");
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                   "Error retrieving data from the database");
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.Message);
             }
         }
     }

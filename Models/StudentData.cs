@@ -44,14 +44,14 @@ namespace StudentsDataApi.Models
 
         [Required(ErrorMessage = "Field degree is required")]
         [StringLength(3, ErrorMessage = "Max 3 characters allowed")]
-        [RegularExpression(@"^[I]+$", ErrorMessage = "Allowed values of degree: I, II, III")]
+        [RegularExpression(@"^[I]{1,3}$", ErrorMessage = "Allowed values of degree: I, II, III")]
         public string degree { get; set; }
 
 
         [Required(ErrorMessage = "Field fieldOfStudy is required")]
         [StringLength(50, ErrorMessage = "Max 50 characters allowed")]
         [RegularExpression(@"^[A-ZĘÓĄŚŁŻŹĆŃ]+[a-zęóąśłżźćńA-ZĘÓĄŚŁŻŹĆŃ'-' ]*$",
-        ErrorMessage = " Field of study must start with uppercase letter and must not contain special characters (except of dash)")]
+        ErrorMessage = " FieldOfStudy must start with uppercase letter and must not contain special characters (except of dash)")]
         public string fieldOfStudy { get; set; }
 
         [Required(ErrorMessage = "Field specialization is required")]
