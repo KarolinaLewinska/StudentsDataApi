@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using StudentsDataApi.Models;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace StudentsDataApi.Controllers
@@ -11,11 +10,11 @@ namespace StudentsDataApi.Controllers
     [ApiController]
     public class StudentsDataController : ControllerBase
     {
-        private readonly StudentDataContext _context;
+        private readonly StudentDataContext _dbContext;
 
-        public StudentsDataController(StudentDataContext context)
+        public StudentsDataController(StudentDataContext dbContext)
         {
-            _context = context;
+            _dbContext = dbContext;
         }
 
         [HttpGet, Route("all-data")]
@@ -30,13 +29,16 @@ namespace StudentsDataApi.Controllers
 
             try
             {
-                if (_context.Students == null)
+                if (_dbContext.Students == null)
                     return NotFound("Data not found");
                 
-                return Ok(_context.Students);
+                return Ok(_dbContext.Students);
             }
             catch (Exception exc)
             {
+                while (exc.InnerException != null)
+                    exc = exc.InnerException;
+
                 return StatusCode(StatusCodes.Status500InternalServerError, exc.Message); 
             }
         }
@@ -53,15 +55,18 @@ namespace StudentsDataApi.Controllers
             
             try
             {
-                var Student = _context.Students.Find(id);
+                var student = _dbContext.Students.Find(id);
 
-                if (Student == null)
+                if (student == null)
                     return NotFound("Not found any student with ID: " + id);
                 
-                return Ok(Student);
+                return Ok(student);
             }
             catch (Exception exc)
             {
+                while (exc.InnerException != null)
+                    exc = exc.InnerException;
+
                 return StatusCode(StatusCodes.Status500InternalServerError, exc.Message);
             }
         }
@@ -77,20 +82,23 @@ namespace StudentsDataApi.Controllers
 
             try
             {
-                var existingPesel = _context.Students.SingleOrDefault(x => x.pesel == student.pesel);
-                var existingIndexNumber = _context.Students.SingleOrDefault(x => x.indexNumber == student.indexNumber);
-                var existingEmail = _context.Students.SingleOrDefault(x => x.email == student.email);
+                var existingPesel = _dbContext.Students.SingleOrDefault(x => x.pesel == student.pesel);
+                var existingIndexNumber = _dbContext.Students.SingleOrDefault(x => x.indexNumber == student.indexNumber);
+                var existingEmail = _dbContext.Students.SingleOrDefault(x => x.email == student.email);
                 
                 if (existingPesel != null || existingIndexNumber != null || existingEmail != null)
                     return StatusCode(StatusCodes.Status409Conflict, "Student's data with the same pesel / index number or email already exists.");
                 
-                _context.Students.Add(student);
-                _context.SaveChanges();
+                _dbContext.Students.Add(student);
+                _dbContext.SaveChanges();
 
                 return CreatedAtAction(nameof(GetStudentData), new { id = student.Id }, student);
             }
             catch (Exception exc)
             {
+                while (exc.InnerException != null)
+                    exc = exc.InnerException;
+
                 return StatusCode(StatusCodes.Status500InternalServerError, exc.Message);
             } 
         }
@@ -110,28 +118,31 @@ namespace StudentsDataApi.Controllers
                 if (id != student.Id)
                     return NotFound("Not found any student with ID: " + id);
                 
-                var studentDb = _context.Students
+                var studentToUpdate = _dbContext.Students
                     .Where(s => s.Id == id).FirstOrDefault<StudentData>();
 
-                if (studentDb != null)
+                if (studentToUpdate != null)
                 {
-                    studentDb.name = student.name;
-                    studentDb.surname = student.surname;
-                    studentDb.indexNumber = student.indexNumber;
-                    studentDb.pesel = student.pesel;
-                    studentDb.email = student.email;
-                    studentDb.studiesType = student.studiesType;
-                    studentDb.degree = student.degree;
-                    studentDb.fieldOfStudy = student.fieldOfStudy;
-                    studentDb.specialization = student.specialization;
+                    studentToUpdate.name = student.name;
+                    studentToUpdate.surname = student.surname;
+                    studentToUpdate.indexNumber = student.indexNumber;
+                    studentToUpdate.pesel = student.pesel;
+                    studentToUpdate.email = student.email;
+                    studentToUpdate.studiesType = student.studiesType;
+                    studentToUpdate.degree = student.degree;
+                    studentToUpdate.fieldOfStudy = student.fieldOfStudy;
+                    studentToUpdate.specialization = student.specialization;
                     
-                    _context.SaveChanges();
+                    _dbContext.SaveChanges();
                 }
                    
                 return Ok("Successfully updated student's data with ID: " + id);
             }
             catch (Exception exc)
             {
+                while (exc.InnerException != null)
+                    exc = exc.InnerException;
+
                 return StatusCode(StatusCodes.Status500InternalServerError, exc.Message);
             }
         }
@@ -148,18 +159,21 @@ namespace StudentsDataApi.Controllers
 
             try
             {
-                var Student = _context.Students.Find(id);
+                var studentToDelete = _dbContext.Students.Find(id);
 
-                if (Student == null)
+                if (studentToDelete == null)
                     return NotFound("Not found any student with ID: " + id) ;
                 
-                _context.Students.Remove(Student);
-                _context.SaveChanges();
+                _dbContext.Students.Remove(studentToDelete);
+                _dbContext.SaveChanges();
 
                 return Ok("Successfully deleted student's data");
             }
             catch (Exception exc)
             {
+                while (exc.InnerException != null)
+                    exc = exc.InnerException;
+
                 return StatusCode(StatusCodes.Status500InternalServerError, exc.Message);
             }
         }
