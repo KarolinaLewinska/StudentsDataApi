@@ -115,9 +115,16 @@ namespace StudentsDataApi.Controllers
 
             try
             {
+                var existingPesel = _dbContext.Students.SingleOrDefault(x => x.pesel == student.pesel && x.Id != student.Id);
+                var existingIndexNumber = _dbContext.Students.SingleOrDefault(x => x.indexNumber == student.indexNumber && x.Id != student.Id);
+                var existingEmail = _dbContext.Students.SingleOrDefault(x => x.email == student.email && x.Id != student.Id);
+                
                 if (id != student.Id)
                     return NotFound("Not found any student with ID: " + id);
-                
+
+                if (existingPesel != null || existingIndexNumber != null || existingEmail != null)
+                    return StatusCode(StatusCodes.Status409Conflict, "Student's data with the same pesel / index number or email already exists.");
+
                 var studentToUpdate = _dbContext.Students
                     .Where(s => s.Id == id).FirstOrDefault<StudentData>();
 
