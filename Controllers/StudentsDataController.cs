@@ -24,9 +24,6 @@ namespace StudentsDataApi.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ActionResult<StudentData> GetAllStudentsData()
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             try
             {
                 if (_dbContext.Students == null)
@@ -50,9 +47,6 @@ namespace StudentsDataApi.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ActionResult<StudentData> GetStudentData(int id)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-            
             try
             {
                 var student = _dbContext.Students.Find(id);
@@ -161,9 +155,6 @@ namespace StudentsDataApi.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ActionResult<StudentData> DeleteStudentData(int id)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             try
             {
                 var studentToDelete = _dbContext.Students.Find(id);
