@@ -1,4 +1,4 @@
-# Students fictional Data Api
+# Students' Data API
 - Web API REST .NET Core 
 - CRUD operations on fictional students' data 
 - Model validation
