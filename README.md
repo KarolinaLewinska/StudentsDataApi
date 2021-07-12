@@ -1,6 +1,5 @@
-# StudentsDataApi
-- Web API REST w technologii .NET Core 
-- Zarządzanie danymi osobowymi studentów
-- Walidacja modelu
-- CRUD
-- Obsługa błędów (try-catch, podstawowe kody odpowiedzi)
+# Students fictional Data Api
+- Web API REST .NET Core 
+- CRUD operations on fictional students' data 
+- Model validation
+- Exception Handling (try-catch, HTTP response status codes)
