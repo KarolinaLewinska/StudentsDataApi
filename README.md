@@ -1,5 +1,10 @@
 # Students' Data API
-The other co-authors: [Justyna Gapys](https://github.com/justynagapys), [Natalia Skórowska](https://github.com/NataliaSkorowska), [Aleksandra Okrój](https://github.com/aleksandraokroj).<br />
+**Co-authors:** 
+[Justyna Gapys](https://github.com/justynagapys)<br />
+[Natalia Skórowska](https://github.com/NataliaSkorowska)<br />
+[Aleksandra Okrój](https://github.com/aleksandraokroj)<br />
+
+## Description
 - Web API REST .NET Core,
 - CRUD operations on fictional students' data, 
 - Model validation,
