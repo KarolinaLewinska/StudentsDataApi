@@ -1,5 +1,5 @@
 # Students' Data API
-**Co-authors:** 
+**Co-authors:**<br />
 [Justyna Gapys](https://github.com/justynagapys)<br />
 [Natalia Skórowska](https://github.com/NataliaSkorowska)<br />
 [Aleksandra Okrój](https://github.com/aleksandraokroj)<br />
